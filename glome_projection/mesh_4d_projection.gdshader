@@ -10,14 +10,17 @@ void vertex() {
 
     model_vertex = VERTEX;
     VERTEX = (WORLD_MATRIX * vec4(VERTEX, 1.0)).xyz;
-    
-    // now play with world coordinates
-    VERTEX.x = VERTEX.x + 1.0;
-    VERTEX.y = VERTEX.y + 1.0;
+
+    float r = 1.0;
+    VERTEX = vec3(
+        r * sin(VERTEX.y) * cos(VERTEX.x),
+        r * sin(VERTEX.y) * sin(VERTEX.x),
+        r * cos(VERTEX.y)
+    );
 
     VERTEX = (INV_CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
 
 void fragment() {
-    ALBEDO = vec3(0.0, model_vertex.x , 0.8);
+    ALBEDO = vec3(model_vertex.y, model_vertex.x , 0.2);
 }

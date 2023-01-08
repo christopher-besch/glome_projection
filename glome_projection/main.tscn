@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://mesh_4d_projection.tscn" type="PackedScene" id=1]
+
+[sub_resource type="PlaneMesh" id=1]
+size = Vector2( 6.28, 6.28 )
+subdivide_width = 32
+subdivide_depth = 32
+
+[node name="Main" type="Spatial"]
+
+[node name="Mesh4DProjection" parent="." instance=ExtResource( 1 )]
+transform = Transform( 0.403516, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
+mesh = SubResource( 1 )
+
+[node name="Camera" type="Camera" parent="Mesh4DProjection"]
+transform = Transform( -0.0474009, 0.0105746, -0.99882, -0.0918348, 0.995663, 0.0148994, 0.994645, 0.0924326, -0.0462241, -4.50757, 0.147423, -0.265587 )
