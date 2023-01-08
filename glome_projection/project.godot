@@ -16,7 +16,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Mesh4dProjection="*res://mesh_4d_projection.gdshader"
+Mesh4dProjection="*res://mesh4d_glomar_projection.gdshader"
 
 [global]
 

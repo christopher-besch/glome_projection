@@ -1,14 +1,8 @@
 [
     {
-        "command": "g++ -o src/gdexample.os -c -std=c++17 -fPIC -g3 -Og -fPIC -I. -Igodot-cpp/godot-headers -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Isrc src/gdexample.cpp",
-        "directory": "/home/chris/godot/gdnative_test2",
-        "file": "src/gdexample.cpp",
-        "output": "src/gdexample.os"
-    },
-    {
-        "command": "g++ -o src/gdlibrary.os -c -std=c++17 -fPIC -g3 -Og -fPIC -I. -Igodot-cpp/godot-headers -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Isrc src/gdlibrary.cpp",
-        "directory": "/home/chris/godot/gdnative_test2",
-        "file": "src/gdlibrary.cpp",
-        "output": "src/gdlibrary.os"
+        "command": "g++ -o src/mesh4d_glomar_projection.os -c -std=c++17 -fPIC -g3 -Og -fPIC -I. -Igodot-cpp/godot-headers -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Isrc src/mesh4d_glomar_projection.cpp",
+        "directory": "/home/chris/godot/glome_projection",
+        "file": "src/mesh4d_glomar_projection.cpp",
+        "output": "src/mesh4d_glomar_projection.os"
     }
 ]
