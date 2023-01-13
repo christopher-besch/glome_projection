@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://mesh4d_glomar_projection.tscn" type="PackedScene" id=1]
+[ext_resource path="res://mesh4d_glomar_projection.gdns" type="Script" id=2]
 
 [sub_resource type="PlaneMesh" id=1]
 size = Vector2( 6.29, 6.29 )
@@ -10,8 +11,11 @@ subdivide_depth = 32
 [node name="Main" type="Spatial"]
 
 [node name="Earth" parent="." instance=ExtResource( 1 )]
-transform = Transform( 1, 0, 0, 0, 2.98023e-08, -1, 0, 1, 2.98023e-08, 0, 0, 0 )
+transform = Transform( 1, 0, 0, 0, 0.999961, -0.00881379, 0, 0.00881379, 0.999961, 0, 0, 0 )
 mesh = SubResource( 1 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( -0.0474009, 0.0105746, -0.99882, -0.994645, -0.0924327, 0.0462242, -0.0918348, 0.995663, 0.0148994, -4.50757, 0.265587, 0.147423 )
+transform = Transform( -0.993805, -0.0925836, 0.0614892, 0.062602, -0.0091602, 0.997997, -0.0918348, 0.995663, 0.0148994, 0.570096, 3.59465, -0.859239 )
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+script = ExtResource( 2 )
