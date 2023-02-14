@@ -1,4 +1,4 @@
-#include "mesh4d_glomar_projection.h"
+#include "grid.h"
 #include "PoolArrays.hpp"
 
 #include <ArrayMesh.hpp>
@@ -8,23 +8,20 @@
 
 using namespace godot;
 
-void Mesh4DGlomarProjection::_register_methods()
+void Grid::_register_methods()
 {
-    register_method("_ready", &Mesh4DGlomarProjection::_ready);
+    register_method("_ready", &Grid::_ready);
 }
 
-Mesh4DGlomarProjection::Mesh4DGlomarProjection() {}
-Mesh4DGlomarProjection::~Mesh4DGlomarProjection() {}
+void Grid::_init() {}
 
-void Mesh4DGlomarProjection::_init() {}
-
-void Mesh4DGlomarProjection::_ready()
+void Grid::_ready()
 {
     Godot::print("hi");
     PoolVector3Array verticies {};
     verticies.push_back(Vector3 {3, 0, 0});
     verticies.push_back(Vector3 {0, 0, 3});
-    verticies.push_back(Vector3 {0, 0, 0});
+    verticies.push_back(Vector3 {-2, -2, 0});
 
     ArrayMesh* arr_mesh = ArrayMesh::_new();
     Array      arrays {};

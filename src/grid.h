@@ -1,17 +1,18 @@
 #pragma once
+#include "helper.h"
 
 #include <Godot.hpp>
 #include <MeshInstance.hpp>
 
 namespace godot {
-class Mesh4DGlomarProjection: public MeshInstance {
-    GODOT_CLASS(Mesh4DGlomarProjection, MeshInstance)
+class Grid: public MeshInstance {
+    GODOT_CLASS(Grid, MeshInstance)
 
 public:
     static void _register_methods();
 
-    Mesh4DGlomarProjection();
-    ~Mesh4DGlomarProjection();
+    Grid() {}
+    ~Grid() {}
 
     void _init();
     void _ready();
