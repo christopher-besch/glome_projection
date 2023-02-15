@@ -1,11 +1,11 @@
 #include "grid.h"
-#include "PoolArrays.hpp"
 
 #include <vector>
 
 #include <ArrayMesh.hpp>
 #include <Mesh.hpp>
 #include <MeshDataTool.hpp>
+#include <Object.hpp>
 #include <Vector3.hpp>
 
 using namespace godot;
@@ -18,13 +18,15 @@ void Grid::_register_methods()
 
 void Grid::_init()
 {
-    m_radius           = 20;
+    m_shader = Object::cast_to<ShaderMaterial>(get_material_override().ptr());
+
+    m_radius           = 5;
     m_num_longitudes   = 16;
     m_num_latitudes    = 16;
-    m_num_subdivisions = 128;
+    m_num_subdivisions = 64;
 
     m_cull_horizon_angl = 0.2 * M_PI;
-    m_cur_pos           = spherical_project(0, 0);
+    m_cam_pos           = spherical_project(0, 0);
 
     generate_grid();
 }
@@ -35,10 +37,13 @@ void Grid::_ready()
 
 void Grid::_process(float delta)
 {
-    m_cur_pos.rotate(Vector3::UP, 0.1 * delta);
-    m_cur_pos.rotate(Vector3::LEFT, 0.05 * delta);
-    calc_culling_plain();
+    m_cam_pos.rotate(Vector3::UP, 0.1 * delta);
+    m_cam_pos.rotate(Vector3::LEFT, 0.05 * delta);
 
+    m_shader->set_shader_param("u_cam_pos", m_cam_pos);
+
+    // generate mesh
+    calc_culling_plain();
     PoolVector3Array verticies {};
     for(auto [from, to]: m_lines) {
         if(to_cull(from) || to_cull(to))
@@ -53,7 +58,6 @@ void Grid::_process(float delta)
     arrays[ArrayMesh::ARRAY_VERTEX] = verticies;
 
     arr_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_LINES, arrays);
-
     set_mesh(arr_mesh);
 }
 
@@ -98,11 +102,11 @@ void Grid::generate_grid()
 void Grid::calc_culling_plain()
 {
     // scale vector to pos down
-    Vector3 cull_plain_point = std::cos(m_cull_horizon_angl) * m_cur_pos;
+    Vector3 cull_plain_point = std::cos(m_cull_horizon_angl) * m_cam_pos;
     // not required to normalize because done in both functions
-    m_cull_plain_param = m_cur_pos.dot(cull_plain_point);
+    m_cull_plain_param = m_cam_pos.dot(cull_plain_point);
 }
 bool Grid::to_cull(Vector3 point)
 {
-    return m_cur_pos.dot(point) - m_cull_plain_param < 0;
+    return m_cam_pos.dot(point) - m_cull_plain_param < 0;
 }

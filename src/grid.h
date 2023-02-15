@@ -3,6 +3,7 @@
 
 #include <Godot.hpp>
 #include <MeshInstance.hpp>
+#include <ShaderMaterial.hpp>
 
 #include <utility>
 #include <vector>
@@ -12,6 +13,8 @@ class Grid: public MeshInstance {
     GODOT_CLASS(Grid, MeshInstance)
 
 private:
+    ShaderMaterial* m_shader {nullptr};
+
     float m_radius;
     // all from pole to pole
     int m_num_longitudes;
@@ -23,7 +26,9 @@ private:
     float m_cull_plain_param;
 
     std::vector<std::pair<Vector3, Vector3>> m_lines;
-    Vector3                                  m_cur_pos;
+    Vector3                                  m_cam_pos;
+    Vector3                                  m_cam_up;
+    Vector3                                  m_cam_right;
 
 public:
     static void
@@ -36,9 +41,9 @@ public:
     void _ready();
     void _process(float delta);
 
-    void set_pos(Vector3 new_pos)
+    void set_cam_pos(Vector3 new_pos)
     {
-        m_cur_pos = new_pos;
+        m_cam_pos = new_pos;
     }
 
 private:
