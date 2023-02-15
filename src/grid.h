@@ -4,6 +4,9 @@
 #include <Godot.hpp>
 #include <MeshInstance.hpp>
 
+#include <utility>
+#include <vector>
+
 namespace godot {
 class Grid: public MeshInstance {
     GODOT_CLASS(Grid, MeshInstance)
@@ -11,16 +14,16 @@ class Grid: public MeshInstance {
 private:
     float m_radius;
     // all from pole to pole
-    int   m_num_longitudes;
-    int   m_num_longitudinal_steps;
-    float m_longitudinal_step_between;
-    float m_longitudinal_step;
-
+    int m_num_longitudes;
     // like equator
-    int   m_num_latitudes;
-    int   m_num_latitudinal_steps;
-    float m_latitudinal_step_between;
-    float m_latitudinal_step;
+    int m_num_latitudes;
+    int m_num_subdivisions;
+
+    float m_cull_horizon_angl;
+    float m_cull_plain_param;
+
+    std::vector<std::pair<Vector3, Vector3>> m_lines;
+    Vector3                                  m_cur_pos;
 
 public:
     static void
@@ -31,9 +34,20 @@ public:
 
     void _init();
     void _ready();
+    void _process(float delta);
+
+    void set_pos(Vector3 new_pos)
+    {
+        m_cur_pos = new_pos;
+    }
 
 private:
-    Vector3 project(float la_ang, float lo_ang);
+    Vector3 spherical_project(float la_ang, float lo_ang);
+
+    void generate_grid();
+
+    void calc_culling_plain();
+    bool to_cull(Vector3 point);
 };
 
 } // namespace godot

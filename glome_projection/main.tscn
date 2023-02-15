@@ -12,8 +12,9 @@ ambient_light_color = Color( 1, 1, 1, 1 )
 script = ExtResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.49447 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 27.66 )
 environment = SubResource( 1 )
+far = 99999.0
 script = ExtResource( 1 )
 
 [node name="Grid" type="MeshInstance" parent="."]
