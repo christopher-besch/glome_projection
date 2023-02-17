@@ -1,8 +1,26 @@
 [
     {
-        "command": "g++ -o src/mesh4d_glomar_projection.os -c -std=c++17 -fPIC -g3 -Og -fPIC -I. -Igodot-cpp/godot-headers -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Isrc src/mesh4d_glomar_projection.cpp",
+        "command": "g++ -o src/camera_controller.os -c -std=c++17 -fPIC -g3 -Og -fPIC -I. -Igodot-cpp/godot-headers -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Ivendor/glm -Isrc src/camera_controller.cpp",
         "directory": "/home/chris/godot/glome_projection",
-        "file": "src/mesh4d_glomar_projection.cpp",
-        "output": "src/mesh4d_glomar_projection.os"
+        "file": "src/camera_controller.cpp",
+        "output": "src/camera_controller.os"
+    },
+    {
+        "command": "g++ -o src/gdlibrary.os -c -std=c++17 -fPIC -g3 -Og -fPIC -I. -Igodot-cpp/godot-headers -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Ivendor/glm -Isrc src/gdlibrary.cpp",
+        "directory": "/home/chris/godot/glome_projection",
+        "file": "src/gdlibrary.cpp",
+        "output": "src/gdlibrary.os"
+    },
+    {
+        "command": "g++ -o src/grid.os -c -std=c++17 -fPIC -g3 -Og -fPIC -I. -Igodot-cpp/godot-headers -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Ivendor/glm -Isrc src/grid.cpp",
+        "directory": "/home/chris/godot/glome_projection",
+        "file": "src/grid.cpp",
+        "output": "src/grid.os"
+    },
+    {
+        "command": "g++ -o src/main.os -c -std=c++17 -fPIC -g3 -Og -fPIC -I. -Igodot-cpp/godot-headers -Igodot-cpp/include -Igodot-cpp/include/core -Igodot-cpp/include/gen -Ivendor/glm -Isrc src/main.cpp",
+        "directory": "/home/chris/godot/glome_projection",
+        "file": "src/main.cpp",
+        "output": "src/main.os"
     }
 ]

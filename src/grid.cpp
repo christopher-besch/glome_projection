@@ -26,7 +26,7 @@ void Grid::_init()
     m_num_subdivisions = 64;
 
     m_cull_horizon_angl = 0.2 * M_PI;
-    m_cam_pos           = spherical_project(0, 0);
+    m_cam_pos           = {0, 0, m_radius};
 
     generate_grid();
 }
