@@ -28,13 +28,14 @@ private:
     float   m_yaw_speed;
     Vector2 m_accumulated_mouse_motion {Vector2::ZERO};
 
+    // radius of glome
+    float m_radius;
+
     MeshInstance* m_debug_point1 {nullptr};
     MeshInstance* m_debug_point2 {nullptr};
 
-    glm::mat3x3 m_globe_rotation;
-    glm::mat3x3 m_globe_rotation_inv;
-
-    glm::mat2x2 m_cam_rotation;
+    // how to rotate (0, 0, r) to cur cam position
+    glm::mat3 m_globe_rotation;
 
 public:
     static void _register_methods();
@@ -47,6 +48,14 @@ public:
     void _notification(const int what);
     void _input(Variant event);
     void _process(float delta);
+
+    Vector3 get_cam_pos() const
+    {
+        return glm_vec32gd(m_globe_rotation * glm::vec3 {0, 0, m_radius});
+    }
+    float     get_radius() const { return m_radius; }
+    glm::mat3 get_globe_rotation() const { return m_globe_rotation; }
+    glm::mat3 get_globe_rotation_inv() const { return glm::inverse(m_globe_rotation); }
 
 private:
     void handle_rotation(float delta);
