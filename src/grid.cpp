@@ -22,10 +22,10 @@ void Grid::_init()
 
     m_radius           = 5;
     m_num_longitudes   = 16;
-    m_num_latitudes    = 16;
+    m_num_latitudes    = 8;
     m_num_subdivisions = 64;
 
-    m_cull_horizon_angl = 0.2 * M_PI;
+    m_cull_horizon_angl = M_PI;
     m_cam_pos           = {0, 0, m_radius};
 
     generate_grid();

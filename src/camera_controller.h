@@ -5,8 +5,11 @@
 #include <Godot.hpp>
 #include <Input.hpp>
 #include <MainLoop.hpp>
+#include <MeshInstance.hpp>
 #include <Variant.hpp>
 #include <Viewport.hpp>
+
+#include <glm/mat3x3.hpp>
 
 namespace godot {
 class CameraController: public Camera {
@@ -16,10 +19,7 @@ private:
     Viewport* m_vp {nullptr};
     Input*    m_in;
 
-    bool    m_focused {true};
-    Vector3 m_facing;
-    Vector3 m_up;
-    Vector3 m_right;
+    bool m_focused {true};
     // per milisecond button pressed
     float m_speed;
     float m_roll_speed;
@@ -27,6 +27,14 @@ private:
     float   m_pitch_speed;
     float   m_yaw_speed;
     Vector2 m_accumulated_mouse_motion {Vector2::ZERO};
+
+    MeshInstance* m_debug_point1 {nullptr};
+    MeshInstance* m_debug_point2 {nullptr};
+
+    glm::mat3x3 m_globe_rotation;
+    glm::mat3x3 m_globe_rotation_inv;
+
+    glm::mat2x2 m_cam_rotation;
 
 public:
     static void _register_methods();
