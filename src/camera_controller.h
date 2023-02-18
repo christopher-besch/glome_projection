@@ -6,6 +6,7 @@
 #include <Input.hpp>
 #include <MainLoop.hpp>
 #include <MeshInstance.hpp>
+#include <ShaderMaterial.hpp>
 #include <Variant.hpp>
 #include <Viewport.hpp>
 
@@ -17,7 +18,7 @@ class CameraController: public Camera {
 
 private:
     Viewport* m_vp {nullptr};
-    Input*    m_in;
+    Input*    m_in {nullptr};
 
     bool m_focused {true};
     // per milisecond button pressed
@@ -30,6 +31,10 @@ private:
 
     // radius of glome
     float m_radius;
+
+    float     m_cull_horizon_angl;
+    glm::vec3 m_cull_plain_point;
+    float     m_cull_plain_param;
 
     MeshInstance* m_debug_point1 {nullptr};
     MeshInstance* m_debug_point2 {nullptr};
@@ -57,9 +62,16 @@ public:
     glm::mat3 get_globe_rotation() const { return m_globe_rotation; }
     glm::mat3 get_globe_rotation_inv() const { return glm::inverse(m_globe_rotation); }
 
+    void set_shader_uniforms(ShaderMaterial* shader)
+    {
+        // shader->set_shader_param("u_cam_pos", m_cam_pos);
+    }
+    bool to_cull(glm::vec3 point);
+
 private:
     void handle_rotation(float delta);
     void handle_movement(float delta);
+    void calc_culling_plain();
 };
 
 } // namespace godot

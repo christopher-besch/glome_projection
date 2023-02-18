@@ -20,11 +20,12 @@ void CameraController::_register_methods()
 
 void CameraController::_init()
 {
-    m_speed       = 10.0;
-    m_roll_speed  = 0.8;
-    m_yaw_speed   = 0.1;
-    m_pitch_speed = 0.1;
-    m_radius      = 5.0;
+    m_speed             = 10.0;
+    m_roll_speed        = 0.8;
+    m_yaw_speed         = 0.1;
+    m_pitch_speed       = 0.1;
+    m_radius            = 5.0;
+    m_cull_horizon_angl = 0.2 * M_PI;
 
     m_globe_rotation = glm::mat3x3 {1, 0, 0,
                                     0, 1, 0,
@@ -33,6 +34,7 @@ void CameraController::_init()
 
 void CameraController::_ready()
 {
+    set_process_priority(0);
     m_vp = get_viewport();
     m_in = Input::get_singleton();
 
@@ -73,6 +75,7 @@ void CameraController::_process(float delta)
 
         handle_rotation(delta);
         handle_movement(delta);
+        calc_culling_plain();
     }
 }
 
@@ -163,4 +166,18 @@ void CameraController::handle_movement(float delta)
     Transform point2_trans = m_debug_point1->get_global_transform();
     point2_trans.set_origin(glm_vec32gd(pointing_to));
     m_debug_point2->set_global_transform(point2_trans);
+}
+
+void CameraController::calc_culling_plain()
+{
+    m_cull_plain_point = m_globe_rotation * glm::vec3 {0, 0, m_radius};
+    // scale vector to pos down
+    glm::vec3 cull_plain_point = std::cos(m_cull_horizon_angl) * m_cull_plain_point;
+    // not required to normalize because done in both functions
+    m_cull_plain_param = glm::dot(m_cull_plain_point, cull_plain_point);
+}
+
+bool CameraController::to_cull(glm::vec3 point)
+{
+    return glm::dot(m_cull_plain_point, point) - m_cull_plain_param < 0;
 }

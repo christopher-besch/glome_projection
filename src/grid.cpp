@@ -20,33 +20,26 @@ void Grid::_init()
 {
     m_shader = Object::cast_to<ShaderMaterial>(get_material_override().ptr());
 
-    m_radius           = 5;
     m_num_longitudes   = 16;
     m_num_latitudes    = 8;
     m_num_subdivisions = 64;
-
-    m_cull_horizon_angl = M_PI;
-    m_cam_pos           = {0, 0, m_radius};
-
-    generate_grid();
 }
 
 void Grid::_ready()
 {
+    m_camera = get_node<CameraController>("../Camera");
+
+    generate_grid();
 }
 
 void Grid::_process(float delta)
 {
-    m_cam_pos.rotate(Vector3::UP, 0.1 * delta);
-    m_cam_pos.rotate(Vector3::LEFT, 0.05 * delta);
-
-    m_shader->set_shader_param("u_cam_pos", m_cam_pos);
+    m_camera->set_shader_uniforms(m_shader);
 
     // generate mesh
-    calc_culling_plain();
     PoolVector3Array verticies {};
     for(auto [from, to]: m_lines) {
-        if(to_cull(from) || to_cull(to))
+        if(m_camera->to_cull(gd_vec32glm(from)) || m_camera->to_cull(gd_vec32glm(to)))
             continue;
         verticies.push_back(from);
         verticies.push_back(to);
@@ -63,9 +56,10 @@ void Grid::_process(float delta)
 
 Vector3 Grid::spherical_project(float la_ang, float lo_ang)
 {
-    return {m_radius * std::sin(la_ang) * std::cos(lo_ang),
-            m_radius * std::sin(la_ang) * std::sin(lo_ang),
-            m_radius * std::cos(la_ang)};
+    float r = m_camera->get_radius();
+    return {r * std::sin(la_ang) * std::cos(lo_ang),
+            r * std::sin(la_ang) * std::sin(lo_ang),
+            r * std::cos(la_ang)};
 }
 
 void Grid::generate_grid()
@@ -97,16 +91,4 @@ void Grid::generate_grid()
             }
         }
     }
-}
-
-void Grid::calc_culling_plain()
-{
-    // scale vector to pos down
-    Vector3 cull_plain_point = std::cos(m_cull_horizon_angl) * m_cam_pos;
-    // not required to normalize because done in both functions
-    m_cull_plain_param = m_cam_pos.dot(cull_plain_point);
-}
-bool Grid::to_cull(Vector3 point)
-{
-    return m_cam_pos.dot(point) - m_cull_plain_param < 0;
 }
