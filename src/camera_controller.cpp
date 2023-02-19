@@ -2,6 +2,7 @@
 
 #include <InputEventMouseMotion.hpp>
 #include <SphereMesh.hpp>
+#include <Transform.hpp>
 
 #include <glm/mat2x2.hpp>
 #include <glm/mat3x2.hpp>
@@ -20,12 +21,12 @@ void CameraController::_register_methods()
 
 void CameraController::_init()
 {
-    m_speed             = 10.0;
+    m_speed             = 0.1 * M_PI;
     m_roll_speed        = 0.8;
     m_yaw_speed         = 0.1;
     m_pitch_speed       = 0.1;
-    m_radius            = 5.0;
-    m_cull_horizon_angl = 0.2 * M_PI;
+    m_radius            = 20.0;
+    m_cull_horizon_angl = 0.05 * M_PI;
 
     m_globe_rotation = glm::mat3x3 {1, 0, 0,
                                     0, 1, 0,
@@ -37,20 +38,9 @@ void CameraController::_ready()
     set_process_priority(0);
     m_vp = get_viewport();
     m_in = Input::get_singleton();
+    // set_cull_mask();
 
     Transform glob_trans = get_global_transform();
-
-    // TODO: remove
-    m_debug_point1     = MeshInstance::_new();
-    SphereMesh* sphere = SphereMesh::_new();
-    m_debug_point1->set_mesh(sphere);
-    m_debug_point1->set_transform(m_debug_point1->get_transform().scaled(Vector3(0.1, 0.1, 0.1)));
-    get_node("../Grid")->add_child(m_debug_point1, true);
-
-    m_debug_point2 = MeshInstance::_new();
-    m_debug_point2->set_mesh(sphere);
-    m_debug_point2->set_transform(m_debug_point2->get_transform().scaled(Vector3(0.1, 0.1, 0.1)));
-    get_node("../Grid")->add_child(m_debug_point2, true);
 }
 
 void CameraController::_notification(const int what)
@@ -87,8 +77,8 @@ void CameraController::handle_rotation(float delta)
     Vector3   facing = -trans.basis.z;
 
     // pitch/yaw
-    rotate(right, -m_accumulated_mouse_motion.y * m_pitch_speed * delta);
-    rotate(up, -m_accumulated_mouse_motion.x * m_yaw_speed * delta);
+    // rotate(right, -m_accumulated_mouse_motion.y * m_pitch_speed * delta);
+    // rotate(up, -m_accumulated_mouse_motion.x * m_yaw_speed * delta);
     m_accumulated_mouse_motion = Vector2::ZERO;
 
     // roll
@@ -100,72 +90,45 @@ void CameraController::handle_rotation(float delta)
 
 void CameraController::handle_movement(float delta)
 {
-    Transform trans = get_global_transform();
-    Vector3   vel   = Vector3::ZERO;
+    glm::vec2 vel {0, 0};
     if(m_in->is_action_pressed("forwards")) {
-        vel -= trans.basis.z;
+        vel -= glm::vec2 {0, 1};
     }
     if(m_in->is_action_pressed("backwards")) {
-        vel += trans.basis.z;
+        vel += glm::vec2 {0, 1};
     }
     if(m_in->is_action_pressed("right")) {
-        vel += trans.basis.x;
+        vel += glm::vec2 {1, 0};
     }
     if(m_in->is_action_pressed("left")) {
-        vel -= trans.basis.x;
+        vel -= glm::vec2 {1, 0};
     }
-    if(m_in->is_action_pressed("up")) {
-        vel += trans.basis.y;
-    }
-    if(m_in->is_action_pressed("down")) {
-        vel -= trans.basis.y;
-    }
-    vel.normalize();
-    trans.origin += vel * m_speed * delta;
-    set_global_transform(trans);
+    if(vel != glm::vec2 {0, 0})
+        vel = glm::normalize(vel);
+    vel *= m_speed * delta;
 
-    // TODO: replace part above
-    trans           = get_transform();
+    Transform trans = get_transform();
     glm::vec3 right = gd_vec32glm(trans.basis.x);
     glm::vec3 up    = gd_vec32glm(trans.basis.y);
-    glm::mat2 cam_rotation {right[0], up[0],
-                            right[1], up[1]};
+    glm::mat2 cam_rotation {up[0], right[0],
+                            up[1], right[1]};
 
     glm::mat3 cam_mat_rotated = m_globe_rotation *
                                 glm::mat3 {cam_rotation[0][0], cam_rotation[0][1], 0,
                                            cam_rotation[1][0], cam_rotation[1][1], 0,
                                            0, 0, 1};
 
-    float phi1 = 0;
-    if(m_in->is_action_pressed("debug_forwards"))
-        phi1 = 0.2 * M_PI * delta;
-    if(m_in->is_action_pressed("debug_backwards"))
-        phi1 = -0.2 * M_PI * delta;
     // rotate on xz plane
-    glm::mat3x3 rotation_mat = {std::cos(phi1), 0, std::sin(phi1),
+    glm::mat3x3 rotation_mat = {std::cos(vel.y), 0, std::sin(vel.y),
                                 0, 1, 0,
-                                -std::sin(phi1), 0, std::cos(phi1)};
-
-    float phi2 = 0;
+                                -std::sin(vel.y), 0, std::cos(vel.y)};
     // rotate on yz plane
     rotation_mat = glm::mat3 {1, 0, 0,
-                              0, std::cos(phi2), -std::sin(phi2),
-                              0, std::sin(phi2), std::cos(phi2)} *
+                              0, std::cos(vel.x), -std::sin(vel.x),
+                              0, std::sin(vel.x), std::cos(vel.x)} *
                    rotation_mat;
 
     m_globe_rotation = cam_mat_rotated * rotation_mat * glm::inverse(cam_mat_rotated) * m_globe_rotation;
-
-    // TODO: remove
-    glm::vec3 new_pos = m_globe_rotation * glm::vec3 {0.0, 0.0, m_radius};
-
-    Transform point1_trans = m_debug_point1->get_global_transform();
-    point1_trans.set_origin(glm_vec32gd(new_pos));
-    m_debug_point1->set_global_transform(point1_trans);
-
-    glm::vec3 pointing_to  = new_pos + cam_mat_rotated * glm::vec3 {-3, 0, 0};
-    Transform point2_trans = m_debug_point1->get_global_transform();
-    point2_trans.set_origin(glm_vec32gd(pointing_to));
-    m_debug_point2->set_global_transform(point2_trans);
 }
 
 void CameraController::calc_culling_plain()
@@ -180,4 +143,13 @@ void CameraController::calc_culling_plain()
 bool CameraController::to_cull(glm::vec3 point)
 {
     return glm::dot(m_cull_plain_point, point) - m_cull_plain_param < 0;
+}
+
+void CameraController::set_shader_uniforms(ShaderMaterial* shader)
+{
+    shader->set_shader_param("u_radius", m_radius);
+    glm::mat3 globe_rotation_inv = glm::inverse(m_globe_rotation);
+    shader->set_shader_param("u_globe_rotation_inv_x", glm_vec32gd(globe_rotation_inv[0]));
+    shader->set_shader_param("u_globe_rotation_inv_y", glm_vec32gd(globe_rotation_inv[1]));
+    shader->set_shader_param("u_globe_rotation_inv_z", glm_vec32gd(globe_rotation_inv[2]));
 }

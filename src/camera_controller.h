@@ -36,9 +36,6 @@ private:
     glm::vec3 m_cull_plain_point;
     float     m_cull_plain_param;
 
-    MeshInstance* m_debug_point1 {nullptr};
-    MeshInstance* m_debug_point2 {nullptr};
-
     // how to rotate (0, 0, r) to cur cam position
     glm::mat3 m_globe_rotation;
 
@@ -54,19 +51,12 @@ public:
     void _input(Variant event);
     void _process(float delta);
 
-    Vector3 get_cam_pos() const
-    {
-        return glm_vec32gd(m_globe_rotation * glm::vec3 {0, 0, m_radius});
-    }
     float     get_radius() const { return m_radius; }
     glm::mat3 get_globe_rotation() const { return m_globe_rotation; }
     glm::mat3 get_globe_rotation_inv() const { return glm::inverse(m_globe_rotation); }
 
-    void set_shader_uniforms(ShaderMaterial* shader)
-    {
-        // shader->set_shader_param("u_cam_pos", m_cam_pos);
-    }
     bool to_cull(glm::vec3 point);
+    void set_shader_uniforms(ShaderMaterial* shader);
 
 private:
     void handle_rotation(float delta);

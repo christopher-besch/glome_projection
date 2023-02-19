@@ -20,8 +20,8 @@ void Grid::_init()
 {
     m_shader = Object::cast_to<ShaderMaterial>(get_material_override().ptr());
 
-    m_num_longitudes   = 16;
-    m_num_latitudes    = 8;
+    m_num_longitudes   = 32;
+    m_num_latitudes    = 32;
     m_num_subdivisions = 64;
 }
 
