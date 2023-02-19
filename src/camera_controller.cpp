@@ -77,8 +77,8 @@ void CameraController::handle_rotation(float delta)
     Vector3   facing = -trans.basis.z;
 
     // pitch/yaw
-    rotate(right, -m_accumulated_mouse_motion.y * m_pitch_speed * delta);
-    rotate(up, -m_accumulated_mouse_motion.x * m_yaw_speed * delta);
+    // rotate(right, -m_accumulated_mouse_motion.y * m_pitch_speed * delta);
+    // rotate(up, -m_accumulated_mouse_motion.x * m_yaw_speed * delta);
     m_accumulated_mouse_motion = {0, 0};
 
     // roll

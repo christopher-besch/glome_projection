@@ -20,7 +20,6 @@ vec2 stereographic_project(vec3 vert) {
     vert = r * vert;
 
     // translate back to origin -> z = 0
-    vert = vert - cam_pos;
     return vert.xy;
 }
 
@@ -31,5 +30,5 @@ void vertex() {
 }
 
 void fragment() {
-    ALBEDO = vec3(0.0f, 0.0f, 1.0f);
+    ALBEDO = COLOR.xyz;
 }

@@ -6,6 +6,7 @@
 #include <Mesh.hpp>
 #include <MeshDataTool.hpp>
 #include <Object.hpp>
+#include <PoolArrays.hpp>
 
 using namespace godot;
 
@@ -37,17 +38,21 @@ void Grid::_process(float delta)
 
     // generate mesh
     PoolVector3Array verticies {};
-    for(auto [from, to]: m_lines) {
+    PoolColorArray   colors {};
+    for(auto [from, to, color]: m_lines) {
         if(m_camera->to_cull(from) || m_camera->to_cull(to))
             continue;
         verticies.push_back(glm_vec32gd(from));
+        colors.push_back(color);
         verticies.push_back(glm_vec32gd(to));
+        colors.push_back(color);
     }
 
     ArrayMesh* arr_mesh = ArrayMesh::_new();
     Array      arrays {};
     arrays.resize(ArrayMesh::ARRAY_MAX);
     arrays[ArrayMesh::ARRAY_VERTEX] = verticies;
+    arrays[ArrayMesh::ARRAY_COLOR]  = colors;
 
     arr_mesh->add_surface_from_arrays(Mesh::PRIMITIVE_LINES, arrays);
     set_mesh(arr_mesh);
@@ -71,8 +76,9 @@ void Grid::generate_grid()
             float lo_ang = lo * step;
             for(int la {0}; la < m_num_latitudes * m_num_subdivisions; ++la) {
                 float la_ang = la * substep;
-                m_lines.push_back({spherical_project(la_ang, lo_ang),
-                                   spherical_project(la_ang + substep, lo_ang)});
+                m_lines.push_back(std::make_tuple(spherical_project(la_ang, lo_ang),
+                                                  spherical_project(la_ang + substep, lo_ang),
+                                                  Color {0, 0, 1}));
             }
         }
     }
@@ -85,8 +91,11 @@ void Grid::generate_grid()
             float la_ang = la * step;
             for(int lo {0}; lo < m_num_longitudes * m_num_subdivisions; ++lo) {
                 float lo_ang = lo * substep;
-                m_lines.push_back({spherical_project(la_ang, lo_ang),
-                                   spherical_project(la_ang, lo_ang + substep)});
+                // equator red
+                Color color = m_num_latitudes % 2 == 0 && la == m_num_latitudes / 2 ? Color(1, 0, 0) : Color(0, 0, 1);
+                m_lines.push_back(std::make_tuple(spherical_project(la_ang, lo_ang),
+                                                  spherical_project(la_ang, lo_ang + substep),
+                                                  color));
             }
         }
     }

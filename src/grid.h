@@ -2,10 +2,12 @@
 #include "camera_controller.h"
 #include "helper.h"
 
+#include <Color.hpp>
 #include <Godot.hpp>
 #include <MeshInstance.hpp>
 #include <ShaderMaterial.hpp>
 
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -23,7 +25,7 @@ private:
     int m_num_latitudes;
     int m_num_subdivisions;
 
-    std::vector<std::pair<glm::vec3, glm::vec3>> m_lines;
+    std::vector<std::tuple<glm::vec3, glm::vec3, Color>> m_lines;
 
 public:
     static void
