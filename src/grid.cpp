@@ -6,7 +6,6 @@
 #include <Mesh.hpp>
 #include <MeshDataTool.hpp>
 #include <Object.hpp>
-#include <Vector3.hpp>
 
 using namespace godot;
 
@@ -39,10 +38,10 @@ void Grid::_process(float delta)
     // generate mesh
     PoolVector3Array verticies {};
     for(auto [from, to]: m_lines) {
-        if(m_camera->to_cull(gd_vec32glm(from)) || m_camera->to_cull(gd_vec32glm(to)))
+        if(m_camera->to_cull(from) || m_camera->to_cull(to))
             continue;
-        verticies.push_back(from);
-        verticies.push_back(to);
+        verticies.push_back(glm_vec32gd(from));
+        verticies.push_back(glm_vec32gd(to));
     }
 
     ArrayMesh* arr_mesh = ArrayMesh::_new();
@@ -54,7 +53,7 @@ void Grid::_process(float delta)
     set_mesh(arr_mesh);
 }
 
-Vector3 Grid::spherical_project(float la_ang, float lo_ang)
+glm::vec3 Grid::spherical_project(float la_ang, float lo_ang)
 {
     float r = m_camera->get_radius();
     return {r * std::sin(la_ang) * std::cos(lo_ang),

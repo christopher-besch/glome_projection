@@ -23,7 +23,7 @@ private:
     int m_num_latitudes;
     int m_num_subdivisions;
 
-    std::vector<std::pair<Vector3, Vector3>> m_lines;
+    std::vector<std::pair<glm::vec3, glm::vec3>> m_lines;
 
 public:
     static void
@@ -37,7 +37,7 @@ public:
     void _process(float delta);
 
 private:
-    Vector3 spherical_project(float la_ang, float lo_ang);
+    glm::vec3 spherical_project(float la_ang, float lo_ang);
 
     void generate_grid();
 };

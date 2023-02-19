@@ -55,7 +55,7 @@ void CameraController::_input(Variant event)
 {
     Ref<InputEventMouseMotion> mouse_event = event;
     if(!mouse_event.is_null())
-        m_accumulated_mouse_motion += mouse_event->get_relative();
+        m_accumulated_mouse_motion += gd_vec22glm(mouse_event->get_relative());
 }
 
 void CameraController::_process(float delta)
@@ -77,9 +77,9 @@ void CameraController::handle_rotation(float delta)
     Vector3   facing = -trans.basis.z;
 
     // pitch/yaw
-    // rotate(right, -m_accumulated_mouse_motion.y * m_pitch_speed * delta);
-    // rotate(up, -m_accumulated_mouse_motion.x * m_yaw_speed * delta);
-    m_accumulated_mouse_motion = Vector2::ZERO;
+    rotate(right, -m_accumulated_mouse_motion.y * m_pitch_speed * delta);
+    rotate(up, -m_accumulated_mouse_motion.x * m_yaw_speed * delta);
+    m_accumulated_mouse_motion = {0, 0};
 
     // roll
     if(m_in->is_action_pressed("roll_left"))

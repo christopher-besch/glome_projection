@@ -25,9 +25,9 @@ private:
     float m_speed;
     float m_roll_speed;
     // per pixel mouse moved
-    float   m_pitch_speed;
-    float   m_yaw_speed;
-    Vector2 m_accumulated_mouse_motion {Vector2::ZERO};
+    float     m_pitch_speed;
+    float     m_yaw_speed;
+    glm::vec2 m_accumulated_mouse_motion {0, 0};
 
     // radius of glome
     float m_radius;
