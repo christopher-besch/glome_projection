@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Basis.hpp>
+#include <Color.hpp>
 #include <Vector2.hpp>
 
 #include <glm/mat3x3.hpp>
@@ -13,15 +14,17 @@ inline glm::vec3 gd_vec32glm(godot::Vector3 vec)
 {
     return glm::vec3 {vec.x, vec.y, vec.z};
 }
-
 inline glm::vec2 gd_vec22glm(godot::Vector2 vec)
 {
     return glm::vec2 {vec.x, vec.y};
 }
-
 inline godot::Vector3 glm_vec32gd(glm::vec3 vec)
 {
     return godot::Vector3 {vec.x, vec.y, vec.z};
+}
+inline godot::Color glm_vec42gd(glm::vec4 vec)
+{
+    return godot::Color {vec.x, vec.y, vec.z, vec.w};
 }
 
 inline glm::mat3x3 gd_basis2glm(godot::Basis basis)

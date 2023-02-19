@@ -10,7 +10,7 @@
 #include <Variant.hpp>
 #include <Viewport.hpp>
 
-#include <glm/mat3x3.hpp>
+#include <glm/mat4x4.hpp>
 
 namespace godot {
 class CameraController: public Camera {
@@ -33,11 +33,11 @@ private:
     float m_radius;
 
     float     m_cull_horizon_angl;
-    glm::vec3 m_cull_plain_point;
+    glm::vec4 m_cull_plain_point;
     float     m_cull_plain_param;
 
-    // how to rotate (0, 0, r) to cur cam position
-    glm::mat3 m_globe_rotation;
+    // how to rotate (0, 0, 0, r) to cur cam position
+    glm::mat4 m_globe_rotation;
 
 public:
     static void _register_methods();
@@ -51,11 +51,9 @@ public:
     void _input(Variant event);
     void _process(float delta);
 
-    float     get_radius() const { return m_radius; }
-    glm::mat3 get_globe_rotation() const { return m_globe_rotation; }
-    glm::mat3 get_globe_rotation_inv() const { return glm::inverse(m_globe_rotation); }
+    float get_radius() const { return m_radius; }
 
-    bool to_cull(glm::vec3 point);
+    bool to_cull(glm::vec4 point);
     void set_shader_uniforms(ShaderMaterial* shader);
 
 private:

@@ -12,15 +12,15 @@ ambient_light_color = Color( 1, 1, 1, 1 )
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 4 )
 shader_param/u_radius = null
-shader_param/u_globe_rotation_inv_x = null
-shader_param/u_globe_rotation_inv_y = null
-shader_param/u_globe_rotation_inv_z = null
+shader_param/u_globe_rotation_inv_0 = null
+shader_param/u_globe_rotation_inv_1 = null
+shader_param/u_globe_rotation_inv_2 = null
+shader_param/u_globe_rotation_inv_3 = null
 
 [node name="Main" type="Spatial"]
 script = ExtResource( 2 )
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
 environment = SubResource( 1 )
 script = ExtResource( 1 )
 
