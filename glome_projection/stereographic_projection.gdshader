@@ -26,7 +26,7 @@ vec3 stereographic_project(vec4 vert) {
 
 void vertex() {
     VERTEX = stereographic_project(vec4(VERTEX, UV.x));
-    VERTEX = (INV_CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
+    // VERTEX = (INV_CAMERA_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
 
 void fragment() {

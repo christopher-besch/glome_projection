@@ -2,13 +2,42 @@
 
 #include <Basis.hpp>
 #include <Color.hpp>
+#include <Godot.hpp>
 #include <Vector2.hpp>
 
 #include <glm/mat3x3.hpp>
 
 #include <sstream>
 
-#define prt(x) Godot::print(String((std::stringstream() << x).str().c_str()))
+#define prt(x) godot::Godot::print(godot::String((std::stringstream() << x).str().c_str()))
+
+template<typename T>
+inline void pretty_prt(T x);
+template<>
+inline void pretty_prt(glm::vec3 vec)
+{
+    prt(vec.x << " " << vec.y << " " << vec.z);
+}
+template<>
+inline void pretty_prt(glm::vec4 vec)
+{
+    prt(vec.x << " " << vec.y << " " << vec.z << " " << vec.w);
+}
+template<>
+inline void pretty_prt(glm::mat3 mat)
+{
+    pretty_prt(glm::vec3 {mat[0][0], mat[1][0], mat[2][0]});
+    pretty_prt(glm::vec3 {mat[0][1], mat[1][1], mat[2][1]});
+    pretty_prt(glm::vec3 {mat[0][2], mat[1][2], mat[2][2]});
+}
+template<>
+inline void pretty_prt(glm::mat4 mat)
+{
+    pretty_prt(glm::vec4 {mat[0][0], mat[1][0], mat[2][0], mat[3][0]});
+    pretty_prt(glm::vec4 {mat[0][1], mat[1][1], mat[2][1], mat[3][1]});
+    pretty_prt(glm::vec4 {mat[0][2], mat[1][2], mat[2][2], mat[3][2]});
+    pretty_prt(glm::vec4 {mat[0][3], mat[1][3], mat[2][3], mat[3][3]});
+}
 
 template<typename GodotType, typename GlmType>
 inline GlmType gd2glm(GodotType);

@@ -71,16 +71,36 @@ void CameraController::handle_rotation(float delta)
     Vector3   up     = trans.basis.y;
     Vector3   facing = -trans.basis.z;
 
-    // pitch/yaw
-    rotate(right, -m_accumulated_mouse_motion.y * m_pitch_speed * delta);
-    rotate(up, -m_accumulated_mouse_motion.x * m_yaw_speed * delta);
+    float pitch                = m_accumulated_mouse_motion.y * m_pitch_speed * delta;
+    float yaw                  = m_accumulated_mouse_motion.x * m_yaw_speed * delta;
     m_accumulated_mouse_motion = {0, 0};
-
-    // roll
+    float roll                 = 0;
     if(m_in->is_action_pressed("roll_left"))
-        rotate(facing, -m_roll_speed * delta);
+        roll = -m_roll_speed * delta;
     if(m_in->is_action_pressed("roll_right"))
-        rotate(facing, m_roll_speed * delta);
+        roll = m_roll_speed * delta;
+
+    glm::mat4 rotation_mat = glm::mat4 {1};
+    // rotation on yz plane
+    rotation_mat = glm::mat4 {1, 0, 0, 0,
+                              0, std::cos(pitch), -std::sin(pitch), 0,
+                              0, std::sin(pitch), std::cos(pitch), 0,
+                              0, 0, 0, 1} *
+                   rotation_mat;
+    // rotation on zx plane
+    rotation_mat = glm::mat4 {std::cos(yaw), 0, std::sin(yaw), 0,
+                              0, 1, 0, 0,
+                              -std::sin(yaw), 0, std::cos(yaw), 0,
+                              0, 0, 0, 1} *
+                   rotation_mat;
+    // rotation on xy plane
+    rotation_mat = glm::mat4 {std::cos(roll), -std::sin(roll), 0, 0,
+                              std::sin(roll), std::cos(roll), 0, 0,
+                              0, 0, 1, 0,
+                              0, 0, 0, 1} *
+                   rotation_mat;
+
+    m_globe_rotation = m_globe_rotation * rotation_mat * glm::inverse(m_globe_rotation) * m_globe_rotation;
 }
 
 void CameraController::handle_movement(float delta)
@@ -127,16 +147,18 @@ void CameraController::handle_movement(float delta)
     //                                        cam_rotation[2][0], cam_rotation[2][1], cam_rotation[2][2], 0,
     //                                        0, 0, 0, 1};
 
-    // rotate on xw plane
-    glm::mat4 rotation_mat = {std::cos(vel.x), 0, 0, -std::sin(vel.x),
-                              0, 1, 0, 0,
-                              0, 0, 1, 0,
-                              std::sin(vel.x), 0, 0, std::cos(vel.x)};
+    glm::mat4 rotation_mat = glm::mat4 {1};
     // rotate on yw plane
     rotation_mat = glm::mat4 {1, 0, 0, 0,
-                              0, std::cos(vel.y), 0, -std::sin(vel.y),
+                              0, std::cos(vel.x), 0, -std::sin(vel.x),
                               0, 0, 1, 0,
-                              0, std::sin(vel.y), 0, std::cos(vel.y)} *
+                              0, std::sin(vel.x), 0, std::cos(vel.x)} *
+                   rotation_mat;
+    // rotate on xw plane
+    rotation_mat = glm::mat4 {std::cos(vel.y), 0, 0, -std::sin(vel.y),
+                              0, 1, 0, 0,
+                              0, 0, 1, 0,
+                              std::sin(vel.y), 0, 0, std::cos(vel.y)} *
                    rotation_mat;
     // rotate on zw plane
     rotation_mat = glm::mat4 {1, 0, 0, 0,
@@ -145,25 +167,7 @@ void CameraController::handle_movement(float delta)
                               0, 0, std::sin(vel.z), std::cos(vel.z)} *
                    rotation_mat;
 
-    m_globe_rotation = cam_mat_rotated * rotation_mat * glm::inverse(cam_mat_rotated) * m_globe_rotation;
-
-    // TODO: remove
-
-    glm::vec4 vert {0, 0, 0, m_radius};
-    glm::mat4 globe_rotation_inv = glm::inverse(m_globe_rotation);
-    // remove rotation
-    vert = globe_rotation_inv * vert;
-    prt(glm::length(vert));
-
-    glm::vec4 cam_pos = glm::vec4(0, 0, 0, m_radius);
-
-    // project on tangential plane
-    float d = dot(cam_pos, cam_pos);
-    float r = d / (dot(vert, cam_pos));
-    vert    = r * vert;
-    prt(vert.x << " " << vert.y << " " << vert.z << " " << vert.w);
-
-    // translate back to origin -> w = 0
+    m_globe_rotation = m_globe_rotation * rotation_mat * glm::inverse(m_globe_rotation) * m_globe_rotation;
 }
 
 void CameraController::calc_culling_plain()
