@@ -50,7 +50,7 @@ void CameraController::_input(Variant event)
 {
     Ref<InputEventMouseMotion> mouse_event = event;
     if(!mouse_event.is_null())
-        m_accumulated_mouse_motion += gd_vec22glm(mouse_event->get_relative());
+        m_accumulated_mouse_motion += gd2glm<godot::Vector2, glm::vec2>(mouse_event->get_relative());
 }
 
 void CameraController::_process(float delta)
@@ -110,9 +110,9 @@ void CameraController::handle_movement(float delta)
     vel *= m_speed * delta;
 
     Transform trans  = get_global_transform();
-    glm::vec3 right  = gd_vec32glm(trans.basis.x);
-    glm::vec3 up     = gd_vec32glm(trans.basis.y);
-    glm::vec3 facing = gd_vec32glm(trans.basis.z);
+    glm::vec3 right  = gd2glm<godot::Vector3, glm::vec3>(trans.basis.x);
+    glm::vec3 up     = gd2glm<godot::Vector3, glm::vec3>(trans.basis.y);
+    glm::vec3 facing = gd2glm<godot::Vector3, glm::vec3>(trans.basis.z);
     glm::mat3 cam_rotation {up, right, facing};
 
     // TODO: maybe to be transposed
@@ -168,24 +168,24 @@ void CameraController::handle_movement(float delta)
 
 void CameraController::calc_culling_plain()
 {
-    m_cull_plain_point = m_globe_rotation * glm::vec4 {0, 0, 0, m_radius};
+    m_cull_plain_normal = m_globe_rotation * glm::vec4 {0, 0, 0, m_radius};
     // scale vector to pos down
-    glm::vec4 other_cull_plain_point = std::cos(m_cull_horizon_angl) * m_cull_plain_point;
+    glm::vec4 point_on_cull_plain = std::cos(m_cull_horizon_angl) * m_cull_plain_normal;
     // not required to normalize because done in both functions
-    m_cull_plain_param = glm::dot(m_cull_plain_point, other_cull_plain_point);
+    m_cull_plain_param = glm::dot(m_cull_plain_normal, point_on_cull_plain);
 }
 
 bool CameraController::to_cull(glm::vec4 point)
 {
-    return glm::dot(m_cull_plain_point, point) - m_cull_plain_param < 0;
+    return glm::dot(m_cull_plain_normal, point) - m_cull_plain_param < 0;
 }
 
 void CameraController::set_shader_uniforms(ShaderMaterial* shader)
 {
     shader->set_shader_param("u_radius", m_radius);
     glm::mat4 globe_rotation_inv = glm::inverse(m_globe_rotation);
-    shader->set_shader_param("u_globe_rotation_inv_0", glm_vec42gd(globe_rotation_inv[0]));
-    shader->set_shader_param("u_globe_rotation_inv_1", glm_vec42gd(globe_rotation_inv[1]));
-    shader->set_shader_param("u_globe_rotation_inv_2", glm_vec42gd(globe_rotation_inv[2]));
-    shader->set_shader_param("u_globe_rotation_inv_3", glm_vec42gd(globe_rotation_inv[3]));
+    shader->set_shader_param("u_globe_rotation_inv_0", glm2gd<glm::vec4, godot::Color>(globe_rotation_inv[0]));
+    shader->set_shader_param("u_globe_rotation_inv_1", glm2gd<glm::vec4, godot::Color>(globe_rotation_inv[1]));
+    shader->set_shader_param("u_globe_rotation_inv_2", glm2gd<glm::vec4, godot::Color>(globe_rotation_inv[2]));
+    shader->set_shader_param("u_globe_rotation_inv_3", glm2gd<glm::vec4, godot::Color>(globe_rotation_inv[3]));
 }

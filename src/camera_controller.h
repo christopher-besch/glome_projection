@@ -33,7 +33,7 @@ private:
     float m_radius;
 
     float     m_cull_horizon_angl;
-    glm::vec4 m_cull_plain_point;
+    glm::vec4 m_cull_plain_normal;
     float     m_cull_plain_param;
 
     // how to rotate (0, 0, 0, r) to cur cam position

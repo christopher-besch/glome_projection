@@ -1,7 +1,5 @@
 #include "grid.h"
 
-#include <vector>
-
 #include <ArrayMesh.hpp>
 #include <Mesh.hpp>
 #include <MeshDataTool.hpp>

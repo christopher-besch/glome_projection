@@ -10,36 +10,51 @@
 
 #define prt(x) Godot::print(String((std::stringstream() << x).str().c_str()))
 
-inline glm::vec3 gd_vec32glm(godot::Vector3 vec)
+template<typename GodotType, typename GlmType>
+inline GlmType gd2glm(GodotType);
+template<>
+inline glm::vec3 gd2glm(godot::Vector3 vec)
 {
-    return glm::vec3 {vec.x, vec.y, vec.z};
+    return {vec.x, vec.y, vec.z};
 }
-inline glm::vec2 gd_vec22glm(godot::Vector2 vec)
+template<>
+inline glm::vec2 gd2glm(godot::Vector2 vec)
 {
-    return glm::vec2 {vec.x, vec.y};
+    return {vec.x, vec.y};
 }
-inline godot::Vector3 glm_vec32gd(glm::vec3 vec)
-{
-    return godot::Vector3 {vec.x, vec.y, vec.z};
-}
-inline godot::Color glm_vec42gd(glm::vec4 vec)
-{
-    return godot::Color {vec.x, vec.y, vec.z, vec.w};
-}
-
-inline glm::mat3x3 gd_basis2glm(godot::Basis basis)
+template<>
+inline glm::mat3x3 gd2glm(godot::Basis basis)
 {
     godot::Vector3 x = basis.x;
     godot::Vector3 y = basis.y;
     godot::Vector3 z = basis.z;
-    return glm::mat3x3 {x.x, y.x, z.x,
-                        x.y, y.y, z.y,
-                        x.z, y.z, z.z};
+    return {x.x, y.x, z.x,
+            x.y, y.y, z.y,
+            x.z, y.z, z.z};
 }
 
-inline godot::Basis glm_mat3x32gd(glm::mat3x3 mat)
+template<typename GlmType, typename GodotType>
+inline GodotType glm2gd(GlmType);
+template<>
+inline godot::Vector3 glm2gd(glm::vec3 vec)
 {
-    return {glm_vec32gd(mat * glm::vec3 {1, 0, 0}),
-            glm_vec32gd(mat * glm::vec3 {0, 1, 0}),
-            glm_vec32gd(mat * glm::vec3 {0, 0, 1})};
+    return {vec.x, vec.y, vec.z};
+}
+template<>
+inline godot::Color glm2gd(glm::vec4 vec)
+{
+    return {vec.x, vec.y, vec.z, vec.w};
+}
+template<>
+inline godot::Basis glm2gd(glm::mat3x3 mat)
+{
+    return {glm2gd<glm::vec3, godot::Vector3>(mat[0]),
+            glm2gd<glm::vec3, godot::Vector3>(mat[1]),
+            glm2gd<glm::vec3, godot::Vector3>(mat[2])};
+}
+
+inline void test()
+{
+    auto t = godot::Vector3 {1, 2, 3};
+    auto i = gd2glm<godot::Vector3, glm::vec3>(t);
 }
